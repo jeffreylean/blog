@@ -1,0 +1,35 @@
+baseURL = 'http://jeffrey-lean.com/'
+languageCode = 'en-us'
+title = 'Jeffrey Lean TechHub'
+theme = 'nightfall'
+
+[params]
+author = "Jeffrey Lean"
+hostname = "jeffrey-lean.com"
+
+[[params.social]]
+key = 0
+name = "github"
+url = "https://github.com/jeffreylean"
+
+[[params.social]]
+key = 1
+name = "twitter"
+url = "https://twitter.com/JeffreyLean1"
+
+[[params.social]]
+key = 2
+name = "twitter"
+url = "https://twitter.com/JeffreyLean1"
+
+[[params.social]]
+key = 3
+name = "LinkedIn"
+url = "https://www.linkedin.com/in/jeffrey-lean-4089a1198/"
+
+[[params.social]]
+key = 4
+name = "Email"
+url = "mailto:leanwf1117@gmail.com"
+
+
