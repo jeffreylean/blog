@@ -4,7 +4,7 @@ date: 2023-05-05T01:03:06+08:00
 draft: true
 ---
 
-![](/opentelemetry_post/download.png)
+{{< figure src="otel.png" width="80%">}}
 
 # **TL;DR**
 
@@ -32,7 +32,7 @@ There are **OpenTelemetry** concepts we need to understand before implementing d
 
 # **Collector**
 
-![](https://miro.medium.com/v2/resize:fit:1050/1*1AvcuItbD2cCDtSgxDp8JA.jpeg align="left")
+![](otel_collector.webp)
 
 Image source, [https://opentelemetry.io/docs/collector/](https://opentelemetry.io/docs/collector/)
 
@@ -40,7 +40,7 @@ Image source, [https://opentelemetry.io/docs/collector/](https://opentelemetry.i
 
 otel collector yaml
 
-![](https://miro.medium.com/v2/resize:fit:1050/1*vbH1AHVudA9dC0VZ6s0imQ.png align="left")
+![](otel_collector_config.png)
 
 Above is an example of otel collector yaml file, there are a few components here in the configuration of otel collector. These components are receivers, processors, exporters, extensions, and services.
 
@@ -66,37 +66,37 @@ One more thing we need is to define the **otel collector configuration.** The co
 
 docker-compose.yaml
 
-![](https://miro.medium.com/v2/resize:fit:1050/1*YDuw8Qnwdap79V9zhBC1KQ.png align="left")
+![](docker_compose.png)
 
 otel-collector-config.yaml
 
-![](https://miro.medium.com/v2/resize:fit:1050/1*TSshqc9FGtHLCJSrGlzU5Q.png align="left")
+![](otel_collector_config_demo.png)
 
 The above are the only 2 yaml files that we need to set up the environment in our docker. Now in the folder directory, all you need to do is `docker-compose up` then everything is set up!
 
-![](https://miro.medium.com/v2/resize:fit:1050/1*6ZuTR2vogCV2TMN7IyRiDg.png align="left")
+![](screenshot_docker_running.webp)
 
 ## **Trace**
 
 With our otel collector running, now let’s start tracing! I have written a very simple go application that instrumented some functions in my application.
 
-![](https://miro.medium.com/v2/resize:fit:1050/1*IewQ0EYU2WpvcHAmAd08gQ.png align="left")
+![](main.png)
 
 Before we start to trace our application, we need to initialize our tracer, but for the purpose of demonstration, I jump straight to the main function, don’t worry, the full code is in my repository, you can always go there, and see how to initialize it.
 
 So after initialization, we can start to trace our application, as you can see I am tracing 2 different functions `Addvalue` and `AddValue2` . Both functions will set their respective attribute in their own span and that’s it. Let’s run our main function and see the end result. By right, after we run the application, the trace should send to both jaeger and **datadog** by the **otel** collector.
 
-![](https://miro.medium.com/v2/resize:fit:509/1*d06QHpEjchmexh3UeJTYjw.png align="left")
+![](screenshot_running_program.webp)
 
 ## **Jaeger**
 
 jaeger result
 
-![](https://miro.medium.com/v2/resize:fit:1050/1*-PfIjl7E-5cxx5QGDKHegw.png align="left")
+![](jaeger_screenshot_1.webp)
 
 spans
 
-![](https://miro.medium.com/v2/resize:fit:1050/1*-pDP7ZQXffCEV9l--ZYJLg.png align="left")
+![](jaeger_screenshot_2.webp)
 
 Tadaaaa! this is what we get in jaeger, we have 1 trace, and within this trace, there are 3 spans,`Main function` , `AddValue` and `AddValue2` . You can also find the attributes we set in the tags of the span.
 
@@ -104,11 +104,11 @@ Tadaaaa! this is what we get in jaeger, we have 1 trace, and within this trace, 
 
 datadog result
 
-![](https://miro.medium.com/v2/resize:fit:1050/1*UQj7QzMrviaW5_iASGXBtQ.png align="left")
+![](datadog_result.webp)
 
 span
 
-![spans](https://miro.medium.com/v2/resize:fit:1050/1*OOz2ix7-vD7HSwO4OiaLsg.png align="left")
+![spans](datadog_spans.webp)
 
 Here in data dog, we have the exact same things we see in jaeger. Amazing right? In our golang application, all we did is set up otel tracer, and the trace end up in 2 different vendors. We didn’t have to specifically use the vendor’s SDK, and maintain multiple different sets of tracer to trace the same thing.
 

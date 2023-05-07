@@ -1,35 +1,59 @@
 baseURL = 'http://jeffrey-lean.com/'
 languageCode = 'en-us'
 title = 'Jeffrey Lean TechHub'
-theme = 'nightfall'
+theme = 'hugo-blog-awesome'
+
+[menu]
+  [[menu.main]]
+    # The page reference (pageRef) is useful for menu highlighting
+    # When pageRef is set, setting `url` is optional; it will be used as a fallback if the page is not found.
+    pageRef="/"
+    name = 'Home'
+    url = '/'
+    weight = 10
+  [[menu.main]]
+    pageRef="posts"
+    name = 'Posts'
+    url = '/posts/'
+    weight = 20
+  [[menu.main]]
+    pageRef="about"
+    name = 'About'
+    url = '/about/'
+    weight = 30
 
 [params]
-author = "Jeffrey Lean"
-hostname = "jeffrey-lean.com"
+  sitename = "Jeffrey Lean TechHub"
+  defaultColor = "dark" # set color mode: dark, light, auto
+  # Setting it to 'auto' applies the color scheme based on the visitor's device color preference.If you don't specify anything, ignore this parameter, or leave it blank,
+  # the default value is set to 'auto'.
+  # You can take a look at layouts/index.html for more information.
+  description = "All tech related content which I wanted to share"
+  mainSections = ['posts']
+  toc = true # set to false to disable table of contents 'globally'
+  goToTop = true # set to false to disable 'go to top' button
 
-[[params.social]]
-key = 0
+[params.author]
+  avatar = "futeristic_technologis.png" # put the file in assets folder; also ensure that image has same height and width
+  # Note: image is not rendered if the resource(avatar image) is not found. No error is displayed.
+  intro = "Hello,world"
+  name = "Jeffrey Lean"
+  description = "A software engineer, technologist, Gopher|Rustacean, coffeeholics"
+
+[[params.socialIcons]]
 name = "github"
 url = "https://github.com/jeffreylean"
 
-[[params.social]]
-key = 1
+[[params.socialIcons]]
 name = "twitter"
 url = "https://twitter.com/JeffreyLean1"
 
-[[params.social]]
-key = 2
-name = "twitter"
-url = "https://twitter.com/JeffreyLean1"
-
-[[params.social]]
+[[params.socialIcons]]
 key = 3
-name = "LinkedIn"
+name = "linkedin"
 url = "https://www.linkedin.com/in/jeffrey-lean-4089a1198/"
 
-[[params.social]]
+[[params.socialIcons]]
 key = 4
-name = "Email"
+name = "email"
 url = "mailto:leanwf1117@gmail.com"
-
-
