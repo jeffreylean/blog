@@ -1,7 +1,7 @@
 ---
 title: "OpenTelemetry, the standardized observability framework for everyone"
 date: 2023-05-05T01:03:06+08:00
-draft: true
+draft: false
 ---
 
 {{< figure src="otel.png" width="80%">}}
