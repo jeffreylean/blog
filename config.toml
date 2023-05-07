@@ -1,4 +1,4 @@
-baseURL = 'http://jeffrey-lean.com/'
+baseURL = 'https://jeffrey-lean.com/'
 languageCode = 'en-us'
 title = 'Jeffrey Lean TechHub'
 theme = 'hugo-blog-awesome'
