@@ -1,0 +1,21 @@
+<div style="text-align: center;">
+  <figure class="rounded-img">
+    <img src="{{ .Get "src" }}" alt="{{ with .Get "alt" }}{{ . }}{{ end }}" title="{{ with .Get "title" }}{{ . }}{{ end }}">
+    {{ with .Get "caption" }}<figcaption>{{ . }}</figcaption>{{ end }}
+  </figure>
+
+  <style>
+  .rounded-img {
+    display: inline-block;
+    overflow: hidden;
+    border-radius: 50%;
+    width: 17%;
+    vertical-align: middle;
+  }
+  .rounded-img img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  </style>
+</div>

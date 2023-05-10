@@ -2,6 +2,7 @@ baseURL = 'https://jeffrey-lean.com/'
 languageCode = 'en-us'
 title = 'Jeffrey Lean TechHub'
 theme = 'hugo-blog-awesome'
+enableInlineShortcodes = true
 
 [menu]
   [[menu.main]]
@@ -30,7 +31,7 @@ theme = 'hugo-blog-awesome'
   # You can take a look at layouts/index.html for more information.
   description = "All tech related content which I wanted to share"
   mainSections = ['posts']
-  toc = true # set to false to disable table of contents 'globally'
+  toc = false # set to false to disable table of contents 'globally'
   goToTop = true # set to false to disable 'go to top' button
 
 [params.author]
