@@ -1,7 +1,7 @@
 ---
 title: "About me"
 date: 2023-05-10T12:06:00+08:00
-draft: true
+draft: false
 ---
 
 {{< round-image src="futeristic_technologis.png">}}
