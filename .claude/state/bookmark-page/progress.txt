@@ -84,3 +84,36 @@ Started: 2026-03-29
 - CSS matches theme: search input like .search-article, chips like .tag-item
 - Dark mode supported via [data-theme="dark"] selector
 - **Learnings:** Added esc() function for XSS protection on user-generated content
+
+## Deliverable - D3: Rust CLI (bookmark binary)
+
+### Task - D3-1
+- Created bookmark-cli/ with Cargo.toml, binary name "bookmark"
+- Dependencies: clap (derive), reqwest (json, tokio), serde (derive), serde_json, toml, tokio (full)
+- cargo build succeeds, clippy clean
+
+### Task - D3-2
+- Reads api_url and api_key from ~/.config/bookmark/config.toml
+- Helpful error messages for missing file, missing fields, empty values
+
+### Task - D3-3
+- `bookmark list` with --tag, --untagged, --unread filters
+- Table format: ID, TITLE, TAGS, DATE columns
+
+### Task - D3-4
+- `bookmark add <url>` posts to API, prints id and title
+
+### Task - D3-5
+- `bookmark update <id> --tags --note --read` sends PATCH
+- Flags combinable, prints updated bookmark details
+
+### Task - D3-6
+- `bookmark tags` lists approved/pending, `approve`/`add` subcommands
+
+### Task - D3-7
+- `bookmark export --json` outputs JSON array to stdout
+- `--untagged` filters, pipeable to file
+
+### Task - D3-8
+- `bookmark import <file>` reads JSON, sends POST /bookmarks/batch
+- **Learnings:** Extracted print_error() helper to reduce error handling duplication

@@ -198,7 +198,7 @@
       "id": "D3",
       "name": "Rust CLI (bookmark binary)",
       "effort": "M",
-      "status": "PENDING",
+      "status": "COMPLETE",
       "dependsOn": ["D1"],
       "tasks": [
         {
@@ -210,7 +210,7 @@
             "Dependencies: clap (derive), reqwest (json, blocking or tokio), serde (derive), serde_json, toml",
             "cargo build succeeds"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D3-2",
@@ -221,7 +221,7 @@
             "Prints helpful error if config file missing",
             "Prints helpful error if api_url or api_key missing"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D3-3",
@@ -234,7 +234,7 @@
             "bookmark list --tag rust filters by tag",
             "Displays id, title, tags, date for each bookmark"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D3-4",
@@ -245,7 +245,7 @@
             "Prints created bookmark (id, title) on success",
             "Prints error on duplicate or invalid URL"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D3-5",
@@ -258,7 +258,7 @@
             "Flags can be combined in single command",
             "Prints updated bookmark on success"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D3-6",
@@ -270,7 +270,7 @@
             "bookmark tags add <tag> calls POST /tags",
             "Prints confirmation on success"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D3-7",
@@ -282,7 +282,7 @@
             "Output is valid JSON parseable by external tools",
             "Can be piped to file: bookmark export --untagged --json > batch.json"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D3-8",
@@ -294,7 +294,7 @@
             "Prints count of updated bookmarks on success",
             "Prints error if file is invalid JSON"
           ],
-          "passes": false
+          "passes": true
         }
       ]
     },
