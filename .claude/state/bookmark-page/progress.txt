@@ -7,6 +7,9 @@ Started: 2026-03-29
 - D1 binding via wrangler.toml [[d1_databases]], local dev uses .dev.vars for secrets
 - Auth: Bearer token compared to env.API_KEY secret
 - Local testing: .dev.vars for API_KEY, wrangler d1 execute --local --file=schema.sql for schema
+- Hugo layout pattern: {{ define "main" }} in layouts/<section>/list.html, content/<section>/_index.md
+- Theme CSS: .post-item flexbox, .search-article input, .tag-item chips, [data-theme="dark"] for dark mode
+- JS pattern: inline <script> at page bottom, API URL from site.Params, IIFE wrapper
 
 ---
 <!-- Task logs below - APPEND ONLY -->
@@ -56,3 +59,28 @@ Started: 2026-03-29
 - POST /bookmarks/batch accepts {updates: [{id, tags, note, is_read}]}
 - New tags created as pending, returns {updated: N}
 - Requires auth
+
+## Deliverable - D2: Hugo Bookmarks Page (Frontend)
+
+### Task - D2-1
+- Created content/bookmarks/_index.md with title 'Bookmarks' and layout 'bookmarks'
+- Created layouts/bookmarks/list.html inheriting from baseof.html
+- Hugo builds with 15 pages, /bookmarks/ renders correctly
+
+### Task - D2-2
+- JS fetches from site.Params.bookmarkApiUrl on page load
+- Renders title (linked), tags chips, note, date for each bookmark
+- Loading state shown, no read/unread rendered
+
+### Task - D2-3
+- Approved tags fetched from /tags and rendered as clickable chips
+- Click toggles filter, active chip highlighted with blue/dark-blue
+
+### Task - D2-4
+- Search input with 300ms debounce, sends ?search= param
+- Works in combination with active tag filter
+
+### Task - D2-5
+- CSS matches theme: search input like .search-article, chips like .tag-item
+- Dark mode supported via [data-theme="dark"] selector
+- **Learnings:** Added esc() function for XSS protection on user-generated content

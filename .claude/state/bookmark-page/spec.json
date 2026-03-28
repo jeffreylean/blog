@@ -130,7 +130,7 @@
       "id": "D2",
       "name": "Hugo Bookmarks Page (Frontend)",
       "effort": "M",
-      "status": "PENDING",
+      "status": "COMPLETE",
       "dependsOn": ["D1"],
       "tasks": [
         {
@@ -142,7 +142,7 @@
             "layouts/bookmarks/list.html exists and inherits from baseof.html via {{ define \"main\" }}",
             "Page renders at /bookmarks/ with hugo server"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D2-2",
@@ -155,7 +155,7 @@
             "Read/unread status is NOT rendered on the page",
             "Loading state shown while fetching"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D2-3",
@@ -167,7 +167,7 @@
             "Active tag visually highlighted",
             "Clicking active tag clears the filter"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D2-4",
@@ -178,7 +178,7 @@
             "Typing triggers filtered fetch via ?search= query param",
             "Search works in combination with tag filter"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D2-5",
@@ -190,7 +190,7 @@
             "Bookmark list items use existing .post-item patterns where applicable",
             "Page looks correct in both dark and light mode"
           ],
-          "passes": false
+          "passes": true
         }
       ]
     },
