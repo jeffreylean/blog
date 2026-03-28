@@ -1,0 +1,52 @@
+{{ define "main" }}
+<div class="wrapper post">
+    <main class="page-content" aria-label="Content">
+        <article>
+            <header class="header">
+                <h1 class="header-title">{{ .Title }}</h1>
+                {{ $ISO_time := dateFormat "2006-01-02T15:04:05-07:00" .Date }}
+                <div class="post-meta">
+                    <time datetime="{{ $ISO_time }}" itemprop="datePublished"> {{ .Date | time.Format ":date_medium" }} </time>
+                    <span class="view-count" id="view-count"></span>
+                </div>
+            </header>
+            {{- if or .Params.toc .Site.Params.toc }}
+            <details class="toc">
+                <summary><b>Table of Contents</b></summary>
+                {{ .TableOfContents }}
+            </details>
+            {{- end -}}
+            <div class="page-content">
+                {{ .Content }}
+            </div>
+        </article>
+    </main>
+</div>
+
+<style>
+    .view-count {
+        margin-left: 0.5rem;
+        opacity: 0.7;
+        font-size: 0.9em;
+    }
+</style>
+
+<script>
+(function() {
+    const slug = window.location.pathname.replace(/^\/|\/$/g, '');
+    if (!slug) return;
+
+    const WORKER_URL = '{{ site.Params.viewCounterUrl | default "https://view-counter.leanwf1117.workers.dev" }}';
+
+    fetch(WORKER_URL + '/views/' + encodeURIComponent(slug))
+        .then(r => r.json())
+        .then(data => {
+            const el = document.getElementById('view-count');
+            if (el && data.count !== undefined) {
+                el.textContent = data.count + (data.count === 1 ? ' view' : ' views');
+            }
+        })
+        .catch(() => {});
+})();
+</script>
+{{ end }}

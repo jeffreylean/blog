@@ -1,0 +1,378 @@
+{
+  "specName": "bookmark-page",
+  "phase": "READY",
+  "deliverables": [
+    {
+      "id": "D1",
+      "name": "D1 Schema + Worker API",
+      "effort": "M",
+      "status": "PENDING",
+      "dependsOn": [],
+      "tasks": [
+        {
+          "id": "D1-1",
+          "category": "setup",
+          "description": "Create Worker project scaffold with wrangler.toml and D1 binding",
+          "steps": [
+            "worker-bookmarks/ directory exists with src/index.js and wrangler.toml",
+            "wrangler.toml has d1_databases binding named DB",
+            "wrangler.toml has worker name 'bookmarks'",
+            "wrangler dev starts without errors"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D1-2",
+          "category": "setup",
+          "description": "Create D1 schema (bookmarks, tags, bookmark_tags tables) and seed 14 approved tags",
+          "steps": [
+            "bookmarks table exists with columns: id, url, title, note, is_read, created_at, updated_at",
+            "tags table exists with columns: id, name, is_approved",
+            "bookmark_tags junction table exists with foreign keys",
+            "14 seed tags inserted with is_approved = 1",
+            "url has UNIQUE constraint on bookmarks table"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D1-3",
+          "category": "implementation",
+          "description": "CORS handling and API key auth middleware",
+          "steps": [
+            "OPTIONS requests return correct CORS headers for https://jeffrey-lean.com and localhost",
+            "Write endpoints (POST, PATCH, DELETE) return 401 without valid Authorization header",
+            "Write endpoints succeed with valid Bearer token",
+            "GET endpoints work without auth"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D1-4",
+          "category": "implementation",
+          "description": "POST /bookmarks — create bookmark with auto title fetch",
+          "steps": [
+            "POST with valid URL creates a bookmark in D1 and returns id, url, title, created_at",
+            "Title is auto-fetched from the URL's <title> tag",
+            "If title fetch fails, bookmark is still saved with URL as fallback title",
+            "Duplicate URL returns 409 error",
+            "Invalid URL returns 422 error"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D1-5",
+          "category": "implementation",
+          "description": "GET /bookmarks — list with filtering, search, and pagination",
+          "steps": [
+            "Returns paginated bookmark list with tags array joined from bookmark_tags",
+            "?tag=rust filters to bookmarks with that tag",
+            "?search=term searches across title and note fields",
+            "?untagged=true returns only bookmarks with no tags",
+            "?unread=true returns only bookmarks where is_read = 0",
+            "?limit=N&offset=M paginates correctly",
+            "Response includes total count"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D1-6",
+          "category": "implementation",
+          "description": "PATCH /bookmarks/:id — update bookmark fields and tags",
+          "steps": [
+            "Updates note field when provided",
+            "Updates is_read field when provided",
+            "Replaces bookmark's tags when tags array provided",
+            "Tags not in approved list are created with is_approved = 0",
+            "Returns 404 for non-existent bookmark id",
+            "Requires auth"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D1-7",
+          "category": "implementation",
+          "description": "DELETE /bookmarks/:id — delete a bookmark",
+          "steps": [
+            "Deletes bookmark and its bookmark_tags entries",
+            "Returns 404 for non-existent id",
+            "Requires auth"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D1-8",
+          "category": "implementation",
+          "description": "Tag endpoints — GET /tags, POST /tags, POST /tags/approve",
+          "steps": [
+            "GET /tags returns { approved: [...], pending: [...] } grouped by is_approved",
+            "POST /tags creates a new tag with is_approved = 1 (requires auth)",
+            "POST /tags/approve sets is_approved = 1 for a pending tag (requires auth)",
+            "Duplicate tag name returns appropriate error"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D1-9",
+          "category": "implementation",
+          "description": "POST /bookmarks/batch — bulk update for CLI import",
+          "steps": [
+            "Accepts { updates: [{ id, tags, note, is_read }] } payload",
+            "Updates each bookmark's tags, note, is_read as provided",
+            "New tags created as is_approved = 0 (pending)",
+            "Returns { updated: N } with count of successfully updated bookmarks",
+            "Requires auth"
+          ],
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "D2",
+      "name": "Hugo Bookmarks Page (Frontend)",
+      "effort": "M",
+      "status": "PENDING",
+      "dependsOn": ["D1"],
+      "tasks": [
+        {
+          "id": "D2-1",
+          "category": "setup",
+          "description": "Create Hugo content file and layout template shell",
+          "steps": [
+            "content/bookmarks/_index.md exists with title 'Bookmarks' and layout 'bookmarks'",
+            "layouts/bookmarks/list.html exists and inherits from baseof.html via {{ define \"main\" }}",
+            "Page renders at /bookmarks/ with hugo server"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D2-2",
+          "category": "implementation",
+          "description": "JS: fetch and render bookmark list from Worker API",
+          "steps": [
+            "Page fetches bookmarks from site.Params.bookmarkApiUrl on load",
+            "Each bookmark displays: title (linked to URL), tags as chips, note (if exists), date saved",
+            "Bookmarks sorted newest first",
+            "Read/unread status is NOT rendered on the page",
+            "Loading state shown while fetching"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D2-3",
+          "category": "implementation",
+          "description": "JS: tag filter chips fetched from /tags endpoint",
+          "steps": [
+            "Approved tags rendered as clickable chips at top of page",
+            "Clicking a tag filters the bookmark list to only that tag",
+            "Active tag visually highlighted",
+            "Clicking active tag clears the filter"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D2-4",
+          "category": "implementation",
+          "description": "JS: free-text search across titles and notes",
+          "steps": [
+            "Search input field present on page",
+            "Typing triggers filtered fetch via ?search= query param",
+            "Search works in combination with tag filter"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D2-5",
+          "category": "styling",
+          "description": "CSS: tag chips, search bar, bookmark list — match hugo-blog-awesome theme",
+          "steps": [
+            "Tag chips styled consistently with theme's dark/light mode",
+            "Search bar matches theme input styling",
+            "Bookmark list items use existing .post-item patterns where applicable",
+            "Page looks correct in both dark and light mode"
+          ],
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "D3",
+      "name": "Rust CLI (bookmark binary)",
+      "effort": "M",
+      "status": "PENDING",
+      "dependsOn": ["D1"],
+      "tasks": [
+        {
+          "id": "D3-1",
+          "category": "setup",
+          "description": "Rust project scaffold with clap, reqwest, serde dependencies",
+          "steps": [
+            "bookmark-cli/ directory with Cargo.toml",
+            "Dependencies: clap (derive), reqwest (json, blocking or tokio), serde (derive), serde_json, toml",
+            "cargo build succeeds"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D3-2",
+          "category": "implementation",
+          "description": "Config file loading from ~/.config/bookmark/config.toml",
+          "steps": [
+            "Reads api_url and api_key from ~/.config/bookmark/config.toml",
+            "Prints helpful error if config file missing",
+            "Prints helpful error if api_url or api_key missing"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D3-3",
+          "category": "implementation",
+          "description": "bookmark list subcommand with --untagged, --unread, --tag filters",
+          "steps": [
+            "bookmark list prints bookmarks in readable table/list format",
+            "bookmark list --untagged shows only untagged",
+            "bookmark list --unread shows only unread",
+            "bookmark list --tag rust filters by tag",
+            "Displays id, title, tags, date for each bookmark"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D3-4",
+          "category": "implementation",
+          "description": "bookmark add <url> subcommand",
+          "steps": [
+            "bookmark add https://example.com posts URL to API",
+            "Prints created bookmark (id, title) on success",
+            "Prints error on duplicate or invalid URL"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D3-5",
+          "category": "implementation",
+          "description": "bookmark update <id> subcommand with --tags, --note, --read flags",
+          "steps": [
+            "bookmark update 1 --tags 'rust,networking' sends PATCH with tags",
+            "bookmark update 1 --note 'great article' sends PATCH with note",
+            "bookmark update 1 --read sends PATCH with is_read=true",
+            "Flags can be combined in single command",
+            "Prints updated bookmark on success"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D3-6",
+          "category": "implementation",
+          "description": "bookmark tags subcommand — list, approve, add",
+          "steps": [
+            "bookmark tags lists approved and pending tags separately",
+            "bookmark tags approve <tag> calls POST /tags/approve",
+            "bookmark tags add <tag> calls POST /tags",
+            "Prints confirmation on success"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D3-7",
+          "category": "implementation",
+          "description": "bookmark export --untagged --json for agent consumption",
+          "steps": [
+            "Outputs JSON array of {id, url, title, created_at} to stdout",
+            "--untagged flag filters to untagged bookmarks only",
+            "Output is valid JSON parseable by external tools",
+            "Can be piped to file: bookmark export --untagged --json > batch.json"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D3-8",
+          "category": "implementation",
+          "description": "bookmark import <file.json> for batch updates from agent",
+          "steps": [
+            "Reads JSON array of {id, tags, note} from file",
+            "Sends POST /bookmarks/batch with updates",
+            "Prints count of updated bookmarks on success",
+            "Prints error if file is invalid JSON"
+          ],
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "D4",
+      "name": "Config.toml Menu Entry + Deploy",
+      "effort": "S",
+      "status": "PENDING",
+      "dependsOn": ["D1", "D2"],
+      "tasks": [
+        {
+          "id": "D4-1",
+          "category": "configuration",
+          "description": "Add Bookmarks menu entry and bookmarkApiUrl param to config.toml",
+          "steps": [
+            "menu.main has Bookmarks entry with url '/bookmarks/' and weight 25",
+            "params.bookmarkApiUrl set to https://bookmarks.leanwf1117.workers.dev",
+            "Bookmarks appears in site navigation between Posts and About"
+          ],
+          "passes": false
+        },
+        {
+          "id": "D4-2",
+          "category": "deployment",
+          "description": "Deploy Worker to Cloudflare and verify end-to-end",
+          "steps": [
+            "Worker deployed and accessible at https://bookmarks.leanwf1117.workers.dev",
+            "D1 database created and schema applied",
+            "API key set via wrangler secret put",
+            "Hugo site builds with bookmarks page",
+            "Bookmarks page loads and fetches from live Worker API"
+          ],
+          "passes": false
+        }
+      ]
+    },
+    {
+      "id": "D5",
+      "name": "Android HTTP Shortcuts Setup (Docs)",
+      "effort": "S",
+      "status": "PENDING",
+      "dependsOn": ["D1"],
+      "tasks": [
+        {
+          "id": "D5-1",
+          "category": "documentation",
+          "description": "Write HTTP Shortcuts app setup guide for Android bookmark capture",
+          "steps": [
+            "Document lists: install HTTP Shortcuts, create shortcut with POST method",
+            "Includes Worker URL, Authorization header, and JSON body format",
+            "Mentions enabling 'Show in Share Sheet'",
+            "Tested: sharing a URL from Android browser triggers the shortcut and saves to D1"
+          ],
+          "passes": false
+        }
+      ]
+    }
+  ],
+  "context": {
+    "patterns": [
+      "Existing view counter Worker uses KV, simple routing, CORS allow-list pattern in worker/src/index.js",
+      "Hugo layouts use {{ define \"main\" }} inheriting from theme baseof.html",
+      "View counter JS: inline <script> at page bottom, Worker URL from site.Params, fetch + DOM update",
+      "Theme: hugo-blog-awesome with dark mode, CSS classes: .post-item, .post-item-title, .post-item-meta"
+    ],
+    "keyFiles": [
+      "worker/src/index.js — existing Worker pattern to reference",
+      "worker/wrangler.toml — existing Worker config pattern",
+      "layouts/_default/list.html — existing list page with view counter JS",
+      "layouts/partials/postCard.html — post card component to mirror for bookmarks",
+      "config.toml — site config, menu entries, params"
+    ],
+    "nonGoals": [
+      "No admin web UI — curation via CLI + agent only",
+      "No SSR/SEO optimization — client-side rendered page",
+      "No bookmark import from browser/Pocket/etc",
+      "No user accounts — single-user system",
+      "CLI does not embed any LLM — agent orchestration is external"
+    ]
+  }
+}

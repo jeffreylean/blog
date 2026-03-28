@@ -1,0 +1,7 @@
+name = "view-counter"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "VIEW_COUNTS"
+id = "1867b1ebbb054678b5e8e046b437066b"

@@ -1,0 +1,57 @@
+{{- define "main" -}}
+<div class="wrapper list-page">
+    <header class="header">
+        <h1 class="header-title center">{{ .Title }}</h1>
+    </header>
+    <main class="page-content" aria-label="Content">
+        {{ range .Pages.GroupByDate "2006" }}
+        {{ $year := .Key }}
+        <h2 class="post-year">{{ $year }}</h2>
+
+        {{/* create a list of posts for each month, with month as heading */}}
+
+        {{ range .Pages }}
+
+        {{ partial "postCard" . }}
+
+        {{ end }} {{/* end range .Pages */}}
+
+        {{ end }} {{/* end range .Pages.GroupByDate "2006" */}}
+
+    </main>
+</div>
+
+<style>
+    .view-count {
+        margin-left: 0.5rem;
+        opacity: 0.7;
+        font-size: 0.85em;
+    }
+</style>
+
+<script>
+(function() {
+    const WORKER_URL = '{{ site.Params.viewCounterUrl | default "https://view-counter.leanwf1117.workers.dev" }}';
+    const els = document.querySelectorAll('.view-count[data-slug]');
+    if (!els.length) return;
+
+    const slugs = Array.from(els).map(el => el.dataset.slug);
+
+    fetch(WORKER_URL + '/views/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slugs })
+    })
+        .then(r => r.json())
+        .then(data => {
+            els.forEach(el => {
+                const count = data.counts[el.dataset.slug];
+                if (count !== undefined) {
+                    el.textContent = '· ' + count + (count === 1 ? ' view' : ' views');
+                }
+            });
+        })
+        .catch(() => {});
+})();
+</script>
+{{- end -}}
