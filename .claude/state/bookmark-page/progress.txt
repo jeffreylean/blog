@@ -1,0 +1,58 @@
+# Progress Log
+Spec: bookmark-page
+Started: 2026-03-29
+
+## Codebase Patterns
+- Worker CORS pattern: check Origin against allow-list, return origin or default
+- D1 binding via wrangler.toml [[d1_databases]], local dev uses .dev.vars for secrets
+- Auth: Bearer token compared to env.API_KEY secret
+- Local testing: .dev.vars for API_KEY, wrangler d1 execute --local --file=schema.sql for schema
+
+---
+<!-- Task logs below - APPEND ONLY -->
+
+## Deliverable - D1: Schema + Worker API
+
+### Task - D1-1
+- Created worker-bookmarks/ with src/index.js, wrangler.toml, package.json
+- wrangler.toml has d1_databases binding DB, worker name "bookmarks"
+- wrangler dev starts and responds on port 8788
+
+### Task - D1-2
+- Created schema.sql with bookmarks, tags, bookmark_tags tables
+- 14 seed tags with is_approved=1
+- UNIQUE constraint on bookmarks.url, foreign keys on bookmark_tags
+
+### Task - D1-3
+- CORS: OPTIONS returns correct headers for jeffrey-lean.com and localhost
+- Write endpoints (POST/PATCH/DELETE) require Bearer token auth
+- GET endpoints work without auth
+
+### Task - D1-4
+- POST /bookmarks creates bookmark, auto-fetches title from <title> tag
+- Fallback to URL as title on fetch failure
+- 409 on duplicate URL, 422 on invalid URL
+
+### Task - D1-5
+- GET /bookmarks returns paginated list with tags array joined
+- Filters: ?tag=, ?search=, ?untagged=true, ?unread=true
+- Pagination: ?limit=&offset=, response includes total count
+
+### Task - D1-6
+- PATCH /bookmarks/:id updates note, is_read, tags
+- New tags created as is_approved=0 (pending)
+- 404 for non-existent, requires auth
+
+### Task - D1-7
+- DELETE /bookmarks/:id removes bookmark + bookmark_tags
+- 404 for non-existent, requires auth
+
+### Task - D1-8
+- GET /tags returns {approved: [...], pending: [...]}
+- POST /tags creates approved tag, POST /tags/approve promotes pending
+- 409 on duplicate tag name
+
+### Task - D1-9
+- POST /bookmarks/batch accepts {updates: [{id, tags, note, is_read}]}
+- New tags created as pending, returns {updated: N}
+- Requires auth
