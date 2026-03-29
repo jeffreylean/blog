@@ -9,7 +9,7 @@ struct Config {
 }
 
 #[derive(Parser)]
-#[command(name = "bookmark", about = "Bookmark CLI for managing saved links")]
+#[command(name = "blogctl", about = "CLI for managing blog bookmarks")]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -134,8 +134,8 @@ fn load_config() -> Config {
             eprintln!(
                 "Error: Config file not found at {}\n\n\
                  Create it with:\n  \
-                 mkdir -p ~/.config/bookmark\n  \
-                 cat > ~/.config/bookmark/config.toml << 'EOF'\n  \
+                 mkdir -p ~/.config/blogctl\n  \
+                 cat > ~/.config/blogctl/config.toml << 'EOF'\n  \
                  api_url = \"https://bookmarks.leanwf1117.workers.dev\"\n  \
                  api_key = \"your-api-key\"\n  \
                  EOF",
@@ -176,7 +176,7 @@ fn config_path() -> PathBuf {
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
     PathBuf::from(home)
         .join(".config")
-        .join("bookmark")
+        .join("blogctl")
         .join("config.toml")
 }
 

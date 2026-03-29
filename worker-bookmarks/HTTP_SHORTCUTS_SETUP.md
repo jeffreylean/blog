@@ -45,7 +45,7 @@ Save bookmarks from your Android phone's share sheet using the [HTTP Shortcuts](
 After sharing a URL, verify it was saved:
 
 ```bash
-bookmark list
+blogctl list
 ```
 
 Or check the live page at https://jeffrey-lean.com/bookmarks/

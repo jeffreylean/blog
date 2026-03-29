@@ -1,10 +1,10 @@
 [package]
-name = "bookmark-cli"
+name = "blogctl"
 version = "0.1.0"
 edition = "2024"
 
 [[bin]]
-name = "bookmark"
+name = "blogctl"
 path = "src/main.rs"
 
 [dependencies]
