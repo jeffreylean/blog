@@ -117,3 +117,17 @@ Started: 2026-03-29
 ### Task - D3-8
 - `bookmark import <file>` reads JSON, sends POST /bookmarks/batch
 - **Learnings:** Extracted print_error() helper to reduce error handling duplication
+
+## Deliverable - D4: Config.toml Menu Entry + Deploy
+
+### Task - D4-1
+- Added [[menu.main]] Bookmarks entry with weight 25 (between Posts 20 and About 30)
+- Added bookmarkApiUrl = "https://bookmarks.leanwf1117.workers.dev" to [params]
+- Hugo builds, Bookmarks appears in nav between Posts and About
+
+### Task - D4-2
+- Created D1 database bookmarks-db (id: 207392f2-46e5-412f-82a6-1dab3a3a7919)
+- Applied schema.sql remotely, 14 seed tags confirmed
+- Set API_KEY secret via wrangler secret put
+- Worker deployed at https://bookmarks.leanwf1117.workers.dev
+- GET /tags returns 14 approved tags, POST without auth returns 401, CORS correct

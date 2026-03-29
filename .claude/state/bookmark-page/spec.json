@@ -302,7 +302,7 @@
       "id": "D4",
       "name": "Config.toml Menu Entry + Deploy",
       "effort": "S",
-      "status": "PENDING",
+      "status": "COMPLETE",
       "dependsOn": ["D1", "D2"],
       "tasks": [
         {
@@ -314,7 +314,7 @@
             "params.bookmarkApiUrl set to https://bookmarks.leanwf1117.workers.dev",
             "Bookmarks appears in site navigation between Posts and About"
           ],
-          "passes": false
+          "passes": true
         },
         {
           "id": "D4-2",
@@ -327,7 +327,7 @@
             "Hugo site builds with bookmarks page",
             "Bookmarks page loads and fetches from live Worker API"
           ],
-          "passes": false
+          "passes": true
         }
       ]
     },
