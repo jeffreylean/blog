@@ -18,6 +18,11 @@ enableInlineShortcodes = true
     url = '/posts/'
     weight = 20
   [[menu.main]]
+    pageRef="bookmarks"
+    name = 'Bookmarks'
+    url = '/bookmarks/'
+    weight = 25
+  [[menu.main]]
     pageRef="about"
     name = 'About'
     url = '/about/'
@@ -32,6 +37,7 @@ enableInlineShortcodes = true
   description = "All tech related content which I wanted to share"
   mainSections = ['posts']
   toc = false # set to false to disable table of contents 'globally'
+  bookmarkApiUrl = "https://bookmarks.leanwf1117.workers.dev"
   goToTop = true # set to false to disable 'go to top' button
 
 [params.author]

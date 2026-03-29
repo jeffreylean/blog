@@ -1,0 +1,141 @@
+# Progress Log
+Spec: bookmark-page
+Started: 2026-03-29
+
+## Codebase Patterns
+- Worker CORS pattern: check Origin against allow-list, return origin or default
+- D1 binding via wrangler.toml [[d1_databases]], local dev uses .dev.vars for secrets
+- Auth: Bearer token compared to env.API_KEY secret
+- Local testing: .dev.vars for API_KEY, wrangler d1 execute --local --file=schema.sql for schema
+- Hugo layout pattern: {{ define "main" }} in layouts/<section>/list.html, content/<section>/_index.md
+- Theme CSS: .post-item flexbox, .search-article input, .tag-item chips, [data-theme="dark"] for dark mode
+- JS pattern: inline <script> at page bottom, API URL from site.Params, IIFE wrapper
+
+---
+<!-- Task logs below - APPEND ONLY -->
+
+## Deliverable - D1: Schema + Worker API
+
+### Task - D1-1
+- Created worker-bookmarks/ with src/index.js, wrangler.toml, package.json
+- wrangler.toml has d1_databases binding DB, worker name "bookmarks"
+- wrangler dev starts and responds on port 8788
+
+### Task - D1-2
+- Created schema.sql with bookmarks, tags, bookmark_tags tables
+- 14 seed tags with is_approved=1
+- UNIQUE constraint on bookmarks.url, foreign keys on bookmark_tags
+
+### Task - D1-3
+- CORS: OPTIONS returns correct headers for jeffrey-lean.com and localhost
+- Write endpoints (POST/PATCH/DELETE) require Bearer token auth
+- GET endpoints work without auth
+
+### Task - D1-4
+- POST /bookmarks creates bookmark, auto-fetches title from <title> tag
+- Fallback to URL as title on fetch failure
+- 409 on duplicate URL, 422 on invalid URL
+
+### Task - D1-5
+- GET /bookmarks returns paginated list with tags array joined
+- Filters: ?tag=, ?search=, ?untagged=true, ?unread=true
+- Pagination: ?limit=&offset=, response includes total count
+
+### Task - D1-6
+- PATCH /bookmarks/:id updates note, is_read, tags
+- New tags created as is_approved=0 (pending)
+- 404 for non-existent, requires auth
+
+### Task - D1-7
+- DELETE /bookmarks/:id removes bookmark + bookmark_tags
+- 404 for non-existent, requires auth
+
+### Task - D1-8
+- GET /tags returns {approved: [...], pending: [...]}
+- POST /tags creates approved tag, POST /tags/approve promotes pending
+- 409 on duplicate tag name
+
+### Task - D1-9
+- POST /bookmarks/batch accepts {updates: [{id, tags, note, is_read}]}
+- New tags created as pending, returns {updated: N}
+- Requires auth
+
+## Deliverable - D2: Hugo Bookmarks Page (Frontend)
+
+### Task - D2-1
+- Created content/bookmarks/_index.md with title 'Bookmarks' and layout 'bookmarks'
+- Created layouts/bookmarks/list.html inheriting from baseof.html
+- Hugo builds with 15 pages, /bookmarks/ renders correctly
+
+### Task - D2-2
+- JS fetches from site.Params.bookmarkApiUrl on page load
+- Renders title (linked), tags chips, note, date for each bookmark
+- Loading state shown, no read/unread rendered
+
+### Task - D2-3
+- Approved tags fetched from /tags and rendered as clickable chips
+- Click toggles filter, active chip highlighted with blue/dark-blue
+
+### Task - D2-4
+- Search input with 300ms debounce, sends ?search= param
+- Works in combination with active tag filter
+
+### Task - D2-5
+- CSS matches theme: search input like .search-article, chips like .tag-item
+- Dark mode supported via [data-theme="dark"] selector
+- **Learnings:** Added esc() function for XSS protection on user-generated content
+
+## Deliverable - D3: Rust CLI (bookmark binary)
+
+### Task - D3-1
+- Created bookmark-cli/ with Cargo.toml, binary name "bookmark"
+- Dependencies: clap (derive), reqwest (json, tokio), serde (derive), serde_json, toml, tokio (full)
+- cargo build succeeds, clippy clean
+
+### Task - D3-2
+- Reads api_url and api_key from ~/.config/bookmark/config.toml
+- Helpful error messages for missing file, missing fields, empty values
+
+### Task - D3-3
+- `bookmark list` with --tag, --untagged, --unread filters
+- Table format: ID, TITLE, TAGS, DATE columns
+
+### Task - D3-4
+- `bookmark add <url>` posts to API, prints id and title
+
+### Task - D3-5
+- `bookmark update <id> --tags --note --read` sends PATCH
+- Flags combinable, prints updated bookmark details
+
+### Task - D3-6
+- `bookmark tags` lists approved/pending, `approve`/`add` subcommands
+
+### Task - D3-7
+- `bookmark export --json` outputs JSON array to stdout
+- `--untagged` filters, pipeable to file
+
+### Task - D3-8
+- `bookmark import <file>` reads JSON, sends POST /bookmarks/batch
+- **Learnings:** Extracted print_error() helper to reduce error handling duplication
+
+## Deliverable - D4: Config.toml Menu Entry + Deploy
+
+### Task - D4-1
+- Added [[menu.main]] Bookmarks entry with weight 25 (between Posts 20 and About 30)
+- Added bookmarkApiUrl = "https://bookmarks.leanwf1117.workers.dev" to [params]
+- Hugo builds, Bookmarks appears in nav between Posts and About
+
+### Task - D4-2
+- Created D1 database bookmarks-db (id: 207392f2-46e5-412f-82a6-1dab3a3a7919)
+- Applied schema.sql remotely, 14 seed tags confirmed
+- Set API_KEY secret via wrangler secret put
+- Worker deployed at https://bookmarks.leanwf1117.workers.dev
+- GET /tags returns 14 approved tags, POST without auth returns 401, CORS correct
+
+## Deliverable - D5: Android HTTP Shortcuts Setup (Docs)
+
+### Task - D5-1
+- Created worker-bookmarks/HTTP_SHORTCUTS_SETUP.md
+- Covers: install app, create shortcut (POST, URL, headers, JSON body with {url})
+- Mentions "Show in Share Sheet" toggle
+- Includes verification steps via CLI and web page

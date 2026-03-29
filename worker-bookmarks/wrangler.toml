@@ -1,0 +1,8 @@
+name = "bookmarks"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bookmarks-db"
+database_id = "207392f2-46e5-412f-82a6-1dab3a3a7919"

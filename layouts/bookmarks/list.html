@@ -1,0 +1,260 @@
+{{- define "main" -}}
+<div class="wrapper list-page">
+    <header class="header">
+        <h1 class="header-title center">{{ .Title }}</h1>
+    </header>
+    <main class="page-content" aria-label="Content">
+        <div class="bookmark-search">
+            <input type="search" id="bookmark-search-input" placeholder="Search bookmarks..." />
+        </div>
+
+        <div id="bookmark-tags" class="bookmark-tags"></div>
+
+        <div id="bookmark-loading" class="bookmark-loading">Loading bookmarks...</div>
+        <div id="bookmark-list"></div>
+    </main>
+</div>
+
+<style>
+    .bookmark-search {
+        margin-bottom: 1rem;
+    }
+
+    .bookmark-search input[type="search"] {
+        width: 100%;
+        height: 40px;
+        border: 0;
+        outline: none;
+        border-radius: 5px;
+        padding: 10px 14px;
+        font-size: 1rem;
+        background-color: rgba(128, 128, 128, 0.1);
+        border: 1px solid rgba(128, 128, 128, 0.1);
+        color: var(--text-base-color, inherit);
+        -webkit-appearance: none;
+    }
+
+    .bookmark-search input[type="search"]::-webkit-input-placeholder {
+        color: #808080;
+    }
+
+    .bookmark-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 1.5rem;
+    }
+
+    .bookmark-tag-chip {
+        padding: 3px 10px;
+        border-radius: 3px;
+        border: 1px solid rgba(128, 128, 128, 0.2);
+        background-color: rgba(128, 128, 128, 0.1);
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: background-color 0.15s, border-color 0.15s;
+        user-select: none;
+    }
+
+    .bookmark-tag-chip:hover {
+        background-color: rgba(128, 128, 128, 0.2);
+    }
+
+    .bookmark-tag-chip.active {
+        background-color: rgba(0, 63, 255, 0.15);
+        border-color: rgba(0, 63, 255, 0.4);
+        color: #003fff;
+    }
+
+    [data-theme="dark"] .bookmark-tag-chip.active {
+        background-color: rgba(119, 168, 253, 0.15);
+        border-color: rgba(119, 168, 253, 0.4);
+        color: #77a8fd;
+    }
+
+    .bookmark-loading {
+        text-align: center;
+        padding: 2rem 0;
+        opacity: 0.7;
+    }
+
+    .bookmark-item {
+        display: flex;
+        flex-direction: column;
+        padding: 8px 0;
+    }
+
+    .bookmark-item:not(:first-child) {
+        border-top: 1px solid rgba(128, 128, 128, 0.15);
+    }
+
+    .bookmark-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .bookmark-item-title {
+        margin: 0;
+        border: 0;
+        padding: 0;
+        font-size: 1rem;
+        font-weight: normal;
+        letter-spacing: 0.1px;
+    }
+
+    .bookmark-item-title a {
+        color: var(--text-base-color, inherit);
+        text-decoration: none;
+    }
+
+    .bookmark-item-title a:hover {
+        text-decoration: underline;
+    }
+
+    .bookmark-item-meta {
+        min-width: 96px;
+        text-align: right;
+        color: #888;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+
+    .bookmark-item-note {
+        margin-top: 4px;
+        font-size: 0.9rem;
+        opacity: 0.75;
+        line-height: 1.5;
+    }
+
+    .bookmark-item-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 4px;
+    }
+
+    .bookmark-item-tag {
+        padding: 1px 6px;
+        border-radius: 2px;
+        border: 1px solid rgba(128, 128, 128, 0.1);
+        background-color: rgba(128, 128, 128, 0.1);
+        font-size: 0.75rem;
+    }
+
+    .bookmark-empty {
+        text-align: center;
+        padding: 2rem 0;
+        opacity: 0.6;
+    }
+</style>
+
+<script>
+(function() {
+    const API_URL = '{{ site.Params.bookmarkApiUrl | default "https://bookmarks.leanwf1117.workers.dev" }}';
+    const searchInput = document.getElementById('bookmark-search-input');
+    const tagsContainer = document.getElementById('bookmark-tags');
+    const listContainer = document.getElementById('bookmark-list');
+    const loadingEl = document.getElementById('bookmark-loading');
+
+    let activeTag = null;
+    let debounceTimer = null;
+
+    function esc(str) {
+        const el = document.createElement('span');
+        el.textContent = str;
+        return el.innerHTML;
+    }
+
+    function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function renderBookmarks(bookmarks) {
+        if (!bookmarks.length) {
+            listContainer.innerHTML = '<div class="bookmark-empty">No bookmarks found.</div>';
+            return;
+        }
+
+        listContainer.innerHTML = bookmarks.map(function(b) {
+            const tagsHtml = b.tags.length
+                ? '<div class="bookmark-item-tags">' +
+                  b.tags.map(function(t) { return '<span class="bookmark-item-tag">' + esc(t) + '</span>'; }).join('') +
+                  '</div>'
+                : '';
+            const noteHtml = b.note
+                ? '<div class="bookmark-item-note">' + esc(b.note) + '</div>'
+                : '';
+            return '<div class="bookmark-item">' +
+                '<div class="bookmark-item-header">' +
+                    '<h4 class="bookmark-item-title"><a href="' + esc(b.url) + '" target="_blank" rel="noopener">' + esc(b.title) + '</a></h4>' +
+                    '<time class="bookmark-item-meta">' + formatDate(b.created_at) + '</time>' +
+                '</div>' +
+                tagsHtml +
+                noteHtml +
+            '</div>';
+        }).join('');
+    }
+
+    function fetchBookmarks() {
+        var params = [];
+        if (activeTag) params.push('tag=' + encodeURIComponent(activeTag));
+        var search = searchInput.value.trim();
+        if (search) params.push('search=' + encodeURIComponent(search));
+        var qs = params.length ? '?' + params.join('&') : '';
+
+        loadingEl.style.display = 'block';
+        listContainer.innerHTML = '';
+
+        fetch(API_URL + '/bookmarks' + qs)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                loadingEl.style.display = 'none';
+                renderBookmarks(data.bookmarks);
+            })
+            .catch(function() {
+                loadingEl.style.display = 'none';
+                listContainer.innerHTML = '<div class="bookmark-empty">Failed to load bookmarks.</div>';
+            });
+    }
+
+    function fetchTags() {
+        fetch(API_URL + '/tags')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var approved = data.approved || [];
+                approved.sort(function(a, b) { return a.name.localeCompare(b.name); });
+                tagsContainer.innerHTML = approved.map(function(t) {
+                    return '<span class="bookmark-tag-chip" data-tag="' + t.name + '">' + t.name + '</span>';
+                }).join('');
+
+                tagsContainer.addEventListener('click', function(e) {
+                    var chip = e.target.closest('.bookmark-tag-chip');
+                    if (!chip) return;
+                    var tag = chip.dataset.tag;
+                    if (activeTag === tag) {
+                        activeTag = null;
+                        chip.classList.remove('active');
+                    } else {
+                        var prev = tagsContainer.querySelector('.bookmark-tag-chip.active');
+                        if (prev) prev.classList.remove('active');
+                        activeTag = tag;
+                        chip.classList.add('active');
+                    }
+                    fetchBookmarks();
+                });
+            })
+            .catch(function() {});
+    }
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(fetchBookmarks, 300);
+    });
+
+    fetchTags();
+    fetchBookmarks();
+})();
+</script>
+{{- end -}}
