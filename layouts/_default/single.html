@@ -38,7 +38,7 @@
 
     const WORKER_URL = '{{ site.Params.viewCounterUrl | default "https://view-counter.leanwf1117.workers.dev" }}';
 
-    fetch(WORKER_URL + '/views/' + encodeURIComponent(slug))
+    fetch(WORKER_URL + '/views/' + encodeURIComponent(slug), { method: 'POST' })
         .then(r => r.json())
         .then(data => {
             const el = document.getElementById('view-count');
