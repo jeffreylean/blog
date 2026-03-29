@@ -1,9 +1,13 @@
+interface Env {
+	VIEW_COUNTS: KVNamespace;
+}
+
 export default {
-	async fetch(request, env) {
+	async fetch(request: Request, env: Env): Promise<Response> {
 		const url = new URL(request.url);
 		const origin = request.headers.get('Origin') || '';
 		const allowed = origin === 'https://jeffrey-lean.com' || origin.startsWith('http://localhost');
-		const corsHeaders = {
+		const corsHeaders: Record<string, string> = {
 			'Access-Control-Allow-Origin': allowed ? origin : 'https://jeffrey-lean.com',
 			'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 			'Access-Control-Allow-Headers': 'Content-Type',
@@ -17,10 +21,10 @@ export default {
 
 		// Batch read: POST /views/batch { slugs: ["a", "b"] }
 		if (url.pathname === '/views/batch' && request.method === 'POST') {
-			const { slugs } = await request.json();
-			const counts = {};
+			const body = await request.json<{ slugs: string[] }>();
+			const counts: Record<string, number> = {};
 			await Promise.all(
-				slugs.map(async (slug) => {
+				body.slugs.map(async (slug) => {
 					const val = await env.VIEW_COUNTS.get(slug);
 					counts[slug] = parseInt(val || '0', 10);
 				})
@@ -44,4 +48,4 @@ export default {
 
 		return new Response(JSON.stringify({ slug, count }), { headers: jsonHeaders });
 	},
-};
+} satisfies ExportedHandler<Env>;
