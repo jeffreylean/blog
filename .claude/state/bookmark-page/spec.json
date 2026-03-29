@@ -1,6 +1,6 @@
 {
   "specName": "bookmark-page",
-  "phase": "IN_PROGRESS",
+  "phase": "COMPLETE",
   "deliverables": [
     {
       "id": "D1",
@@ -335,7 +335,7 @@
       "id": "D5",
       "name": "Android HTTP Shortcuts Setup (Docs)",
       "effort": "S",
-      "status": "PENDING",
+      "status": "COMPLETE",
       "dependsOn": ["D1"],
       "tasks": [
         {
@@ -348,7 +348,7 @@
             "Mentions enabling 'Show in Share Sheet'",
             "Tested: sharing a URL from Android browser triggers the shortcut and saves to D1"
           ],
-          "passes": false
+          "passes": true
         }
       ]
     }

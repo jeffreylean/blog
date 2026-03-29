@@ -131,3 +131,11 @@ Started: 2026-03-29
 - Set API_KEY secret via wrangler secret put
 - Worker deployed at https://bookmarks.leanwf1117.workers.dev
 - GET /tags returns 14 approved tags, POST without auth returns 401, CORS correct
+
+## Deliverable - D5: Android HTTP Shortcuts Setup (Docs)
+
+### Task - D5-1
+- Created worker-bookmarks/HTTP_SHORTCUTS_SETUP.md
+- Covers: install app, create shortcut (POST, URL, headers, JSON body with {url})
+- Mentions "Show in Share Sheet" toggle
+- Includes verification steps via CLI and web page
