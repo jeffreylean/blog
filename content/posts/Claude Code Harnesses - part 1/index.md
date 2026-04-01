@@ -162,7 +162,7 @@ The separation here is crucial to keep the prompt cache warm. Cached input token
 
 ### Retrieving from Memory
 
-This is where it gets really interesting. And I want to emphasize this — **there is no RAG here. No embedding retrieval. No vector similarity search. Nothing fancy.**
+The retrieval is very simple, and I want to emphasize this — **there is no RAG here. No embedding retrieval. No vector similarity search. Nothing fancy.**
 
 The retrieval mechanism is purely a **traditional LLM-as-ranker** approach. Here's how it works:
 
